@@ -1,0 +1,97 @@
+specification {
+    element system
+    element component
+    element microservice
+    element database
+
+    relationship async
+}
+
+model {
+    frontend = component 'Frontend App' 'Пользовательский интерфейс' 'React'
+
+    apiGateway = component 'API Gateway' 'API для получения данных из микросервисов'
+
+    microservices = system 'Microservices' 'Все микросервисы программы' {
+        authService = component 'Auth Service' 'Регистрация и авторизация' 'Spring Boot'
+        userService = component 'User Service' 'Управление пользователями' 'Spring Boot'
+        productService = component 'Product Service' 'Управление товарами' 'Spring Boot'
+        cartService = component 'Cart Service' 'Управление корзиной' 'Spring Boot'
+        orderService = component 'Order Service' 'Управление заказами' 'Spring Boot'
+        paymentService = component 'Payment Service' 'Обработка платежей' 'Spring Boot'
+        deliveryService = component 'Delivery Service' 'Управление доставкой' 'Spring Boot'
+        notificationService = component 'Notification Service' 'Управление уведомлениями' 'Spring Boot'
+
+        paymentService -[async]-> externalPaymentGateway 'Запрашивает данные' 'HTTP/REST'
+        userService -[async]-> usersDB 'Запрашивает данные' 'JDBC'
+        productService -[async]-> productsDB 'Запрашивает данные' 'JDBC'
+        cartService -[async]-> cartsDB 'Запрашивает данные' 'JDBC'
+        orderService -[async]-> ordersDB 'Запрашивает данные' 'JDBC'
+    }
+
+    externalSystem = system 'External System' 'Сторонние системы' {
+        externalPaymentGateway = component 'External Payment Gateway' 'Обработка платежей'
+    }
+
+    databases = system 'Databases' {
+        usersDB = database 'Users Database' 'Данные пользователей' 'PostgreSQL'
+        productsDB = database 'Products Database' 'Данные товаров' 'PostgreSQL'
+        cartsDB = database 'Carts Database' 'Данные корзин' 'PostgreSQL'
+        ordersDB = database 'Orders Database' 'Данные заказов' 'PostgreSQL'
+    }
+
+    frontend -[async]-> apiGateway 'Использует' 'HTTP/REST'
+    apiGateway -[async]-> productService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> cartService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> orderService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> paymentService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> deliveryService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> notificationService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> userService 'Маршрутизирует' 'HTTP/REST'
+    apiGateway -[async]-> authService 'Маршрутизирует' 'HTTP/REST'
+}
+
+views {
+    view mainboard {
+        title 'Mainboard'
+        description 'Компонентная схема системы электронной коммерции'
+
+        include *, microservices.*, externalSystem.*, databases.*
+
+        style microservices, externalSystem, databases {
+            border dashed
+            opacity 25%
+            color muted
+        }
+
+        style frontend {
+            shape browser
+        }
+
+        style externalSystem.externalPaymentGateway {
+            color slate
+        }
+
+        style databases.* {
+            shape storage
+        }
+
+        style databases.usersDB {
+            color sky
+        }
+
+        style databases.productsDB {
+            color secondary
+        }
+
+        style databases.cartsDB {
+            color secondary
+        }
+
+        style databases.ordersDB {
+            color secondary
+        }
+
+        autoLayout LeftRight 146 106
+    }
+}
