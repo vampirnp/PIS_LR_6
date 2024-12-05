@@ -12,7 +12,7 @@
 - Frontend: React 
 - Backend Services: Spring Boot
 - Database: PostgreSQL
-- Внешний сервис: Payment Service
+- Внешний сервис: Payment Service (например, Sberpay или PayPal)
 
 ![image](https://github.com/user-attachments/assets/9af9515e-501c-42cd-a29e-50a8af04758c)
 
@@ -40,3 +40,5 @@
 - От сервиса к сервису: HTTP/REST
 - Обработка платежей: HTTP/REST/Kafka/TLS.
 - Работа с БД: JDBC
+
+Айран топчик
